@@ -61,6 +61,7 @@ export const imageService = {
     async checkImageSaved(req) {
         const imageId = Number(req.params.id);
         const userId = req.user.id;
+        console.log("[DEBUG checkImageSaved] userId =", userId, "imageId =", imageId, "types =", typeof userId, typeof imageId);
 
         const savedRecord = await prisma.savedImages.findUnique({
             where: {
@@ -70,6 +71,7 @@ export const imageService = {
                 }
             }
         });
+        console.log("[DEBUG checkImageSaved] savedRecord =", JSON.stringify(savedRecord));
 
         return { isSaved: !!savedRecord };
     },

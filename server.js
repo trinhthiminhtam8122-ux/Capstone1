@@ -16,7 +16,7 @@ app.use("/api", rootRouter);
 
 app.use(appError);
 
-const PORT = 3039;
+const PORT = process.env.PORT || 3039;
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 })

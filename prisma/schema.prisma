@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/common/prisma/generated/client"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Comments {
+  id          Int       @id @default(autoincrement())
+  userId      Int?
+  imageId     Int?
+  commentDate DateTime? @default(now()) @db.DateTime(0)
+  content     String    @db.Text
+  Users       Users?    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Comments_ibfk_1")
+  Images      Images?   @relation(fields: [imageId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Comments_ibfk_2")
+
+  @@index([imageId], map: "imageId")
+  @@index([userId], map: "userId")
+}
+
+model Images {
+  id          Int           @id @default(autoincrement())
+  title       String        @db.VarChar(255)
+  url         String        @db.VarChar(255)
+  description String?       @db.Text
+  userId      Int?
+  Comments    Comments[]
+  Users       Users?        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Images_ibfk_1")
+  SavedImages SavedImages[]
+
+  @@index([userId], map: "userId")
+}
+
+model SavedImages {
+  userId    Int
+  imageId   Int
+  savedDate DateTime? @default(now()) @db.DateTime(0)
+  Users     Users     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "SavedImages_ibfk_1")
+  Images    Images    @relation(fields: [imageId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "SavedImages_ibfk_2")
+
+  @@id([userId, imageId])
+  @@index([imageId], map: "imageId")
+}
+
+model Users {
+  id          Int           @id @default(autoincrement())
+  email       String        @unique(map: "email") @db.VarChar(255)
+  password    String        @db.VarChar(255)
+  fullName    String        @db.VarChar(255)
+  age         Int?
+  avatar      String?       @default("default-avatar.png") @db.VarChar(255)
+  Comments    Comments[]
+  Images      Images[]
+  SavedImages SavedImages[]
+}
